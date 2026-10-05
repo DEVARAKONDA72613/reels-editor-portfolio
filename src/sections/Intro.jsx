@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
-import manojImage from '../assets/images/manoj.jpg';
 
 export const Intro = () => {
   const { setCursorText } = useTheme();
@@ -32,7 +31,7 @@ export const Intro = () => {
           onMouseLeave={() => setCursorText('')}
         >
           <img
-            src={manojImage}
+            src="/manoj.jpg"
             alt="Manoj S N"
             className="h-full w-full object-cover"
           />
