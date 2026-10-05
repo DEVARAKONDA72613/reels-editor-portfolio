@@ -3,33 +3,30 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [activeAccent, setActiveAccent] = useState(null);
+  const [activeAccent, setActiveAccent] = useState('#D56A35');
   const [activeReel, setActiveReel] = useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [cursorText, setCursorText] = useState('');
 
   useEffect(() => {
-    const accent = activeAccent || '#ffffff';
-    document.documentElement.style.setProperty('--accent-glow', accent);
-    document.documentElement.style.setProperty('--accent-color', accent);
+    document.documentElement.style.setProperty('--accent-glow', activeAccent);
+    document.documentElement.style.setProperty('--accent-color', activeAccent);
   }, [activeAccent]);
 
   const selectReel = (reel) => {
-    setActiveReel(reel);
-    setActiveAccent(reel ? reel.accentColor : null);
+    setActiveReel(reel || null);
+    setActiveAccent(reel?.accent || '#D56A35');
     if (reel) setIsViewerOpen(true);
   };
 
-  const closeViewer = () => {
-    setIsViewerOpen(false);
-  };
+  const closeViewer = () => setIsViewerOpen(false);
 
   const hoverReel = (reel) => {
     if (reel) {
-      setActiveAccent(reel.accentColor);
+      setActiveAccent(reel.accent || '#D56A35');
       setActiveReel(reel);
     } else if (!isViewerOpen) {
-      setActiveAccent(null);
+      setActiveAccent('#D56A35');
       setActiveReel(null);
     }
   };
@@ -46,23 +43,16 @@ export const ThemeProvider = ({ children }) => {
         isViewerOpen,
         closeViewer,
         cursorText,
-        setCursorText
+        setCursorText,
       }}
     >
       <div
-        className="fixed inset-0 pointer-events-none z-0 opacity-20 transition-colors duration-1000"
+        className="pointer-events-none fixed inset-0 z-0 opacity-20 transition-opacity duration-1000"
         style={{
-          background: activeReel
-            ? `radial-gradient(circle at 50% 50%, ${activeReel.accentColor} 0%, transparent 70%)`
-            : 'transparent'
+          background: `radial-gradient(circle at 50% 50%, ${activeAccent} 0%, transparent 70%)`,
         }}
       />
-      <div
-        className="relative transition-colors duration-1000 ease-in-out"
-        style={{ backgroundColor: '#080809' }}
-      >
-        {children}
-      </div>
+      <div className="relative bg-[#080809]">{children}</div>
     </ThemeContext.Provider>
   );
 };

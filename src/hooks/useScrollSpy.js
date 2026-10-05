@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export const useScrollSpy = (ids, options = {}) => {
-  const [activeId, setActiveId] = useState(ids[0] ?? '');
+export const useScrollSpy = (ids) => {
+  const [activeId, setActiveId] = useState(ids[0] || '');
 
   useEffect(() => {
     const elements = ids
@@ -16,22 +16,17 @@ export const useScrollSpy = (ids, options = {}) => {
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
-        }
+        if (visible[0]) setActiveId(visible[0].target.id);
       },
       {
-        root: null,
-        threshold: [0.2, 0.4, 0.6, 0.8],
-        rootMargin: '-12% 0px -45% 0px',
-        ...options
+        threshold: [0.15, 0.35, 0.55, 0.75],
+        rootMargin: '-12% 0px -55% 0px',
       }
     );
 
     elements.forEach((element) => observer.observe(element));
-
     return () => observer.disconnect();
-  }, [ids, options]);
+  }, [ids.join('|')]);
 
   return activeId;
 };

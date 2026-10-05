@@ -1,167 +1,106 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Disc, Eye, Play } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
+import React from "react";
+import { motion } from "framer-motion";
+import { Play } from "lucide-react";
 
-const Needle = () => (
-  <div className="pointer-events-none absolute right-[-24px] top-1/2 z-40 h-1 w-12 -translate-y-1/2 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.4)]">
-    <div className="absolute -left-1 top-[-3px] h-2 w-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.7)]" />
-  </div>
-);
-
-export const VinylRecord = ({ reels, activeReelIndex, onHoverTrack, onSelectTrack, onTrackChange }) => {
-  const { setCursorText } = useTheme();
-  const rotation = useMotionValue(0);
-  const pointerAngle = useRef(null);
-  const isDragging = useRef(false);
-  const springConfig = { damping: 30, stiffness: 110, mass: 1.2 };
-  const smoothRotation = useSpring(rotation, springConfig);
-  const step = 360 / reels.length;
-
-  const activeIndex = useTransform(smoothRotation, (value) => {
-    const normalized = (value % 360 + 360) % 360;
-    return Math.floor(normalized / step);
-  });
-
-  useEffect(() => {
-    if (typeof activeReelIndex === 'number') {
-      rotation.set(activeReelIndex * step);
-    }
-  }, [activeReelIndex, rotation, step]);
-
-  useEffect(() => {
-    if (!onTrackChange) return undefined;
-    const unsubscribe = activeIndex.on('change', (value) => {
-      const index = Number(value);
-      if (Number.isFinite(index) && index >= 0 && index < reels.length) {
-        onTrackChange(index);
-      }
-    });
-    return () => unsubscribe();
-  }, [activeIndex, onTrackChange, reels.length]);
-
-  const currentReel = reels[activeReelIndex] || reels[0];
-
-  const getPointerAngle = (event) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const centerX = bounds.left + bounds.width / 2;
-    const centerY = bounds.top + bounds.height / 2;
-    return Math.atan2(event.clientY - centerY, event.clientX - centerX) * (180 / Math.PI);
-  };
-
-  const handlePointerDown = (event) => {
-    if (event.button !== 0) return;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    pointerAngle.current = getPointerAngle(event);
-    isDragging.current = true;
-  };
-
-  const handlePointerMove = (event) => {
-    if (!isDragging.current || pointerAngle.current === null) return;
-
-    const nextAngle = getPointerAngle(event);
-    let delta = nextAngle - pointerAngle.current;
-    if (delta > 180) delta -= 360;
-    if (delta < -180) delta += 360;
-
-    rotation.set(rotation.get() + delta);
-    pointerAngle.current = nextAngle;
-  };
-
-  const finishPointerDrag = () => {
-    isDragging.current = false;
-    pointerAngle.current = null;
-  };
+export const VinylRecord = ({
+  reel,
+  index,
+  total = 0,
+  isActive = false,
+  onSelect,
+}) => {
+  if (!reel) return null;
 
   return (
-    <div className="relative mx-auto flex aspect-square w-full max-w-[580px] select-none items-center justify-center">
-      <div
-        className="pointer-events-none absolute inset-4 rounded-full blur-3xl opacity-30 transition-all duration-700"
-        style={{ backgroundColor: currentReel.accentColor }}
-      />
-
-      <div className="relative h-[min(400px,calc(100vw-3rem))] w-[min(400px,calc(100vw-3rem))]">
-        <Needle />
-        <motion.div
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={finishPointerDrag}
-          onPointerCancel={finishPointerDrag}
-          onLostPointerCapture={finishPointerDrag}
-          onMouseEnter={() => setCursorText('ROTATE')}
-          onMouseLeave={() => setCursorText('')}
-          onClick={() => {
-            if (!isDragging.current) onSelectTrack?.(currentReel);
-          }}
-          style={{ rotate: smoothRotation, touchAction: 'none' }}
-          className="relative h-full w-full cursor-grab rounded-full border border-zinc-800 bg-black shadow-2xl active:cursor-grabbing"
-        >
-        {reels.map((reel, index) => (
-          <div
-            key={reel.id}
-            className="absolute left-1/2 top-0 h-1/2 w-[1px] -ml-[0.5px] origin-bottom bg-zinc-800/80"
-            style={{ transform: `translateX(-50%) rotate(${index * (360 / reels.length)}deg)` }}
-          />
-        ))}
-
-        <div className="absolute inset-2 rounded-full border border-zinc-800/80 vinyl-grooves" />
-        <div className="absolute inset-8 rounded-full border border-zinc-800/40" />
-        <div className="absolute inset-16 rounded-full border border-zinc-800/60" />
-        <div className="absolute inset-24 rounded-full border border-zinc-800/40" />
-        <div className="absolute inset-32 rounded-full border border-zinc-800/80" />
-        <div className="vinyl-sheen absolute inset-0 rounded-full" />
-
+    <motion.button
+      type="button"
+      layoutId={`vinyl-${reel.id}`}
+      onClick={() => onSelect?.(reel)}
+      whileHover={{ y: -8, scale: 1.025 }}
+      whileTap={{ scale: 0.98 }}
+      className="group relative block w-full text-left"
+      aria-label={`Play ${reel.title}`}
+    >
+      <div className="relative aspect-square">
+        {/* Soft light behind the record */}
         <div
-          className="relative z-10 flex h-44 w-44 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-4 text-center shadow-inner md:h-52 md:w-52"
+          className="pointer-events-none absolute inset-[15%] rounded-full blur-[45px] opacity-0 transition duration-500 group-hover:opacity-20"
+          style={{ backgroundColor: reel.accentColor }}
+        />
+
+        {/* Record */}
+        <div
+          className="absolute inset-[8%] rounded-full border border-white/10 bg-[#090909] shadow-[0_24px_50px_rgba(0,0,0,0.55)] transition duration-500 group-hover:border-white/20"
           style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            backgroundColor: '#121216',
-            borderColor: currentReel.accentColor,
-            boxShadow: `inset 0 0 20px ${currentReel.accentColor}33`
+            boxShadow: isActive
+              ? `0 0 45px ${reel.accentColor}18, 0 24px 50px rgba(0,0,0,0.55)`
+              : undefined,
           }}
         >
-          <div className="mb-2 h-6 w-6 rounded-full border-2 border-zinc-700 bg-[#080809] shadow-inner" />
-          <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-zinc-500">SIDE A • 45 RPM</span>
-          <span className="mt-0.5 max-w-[140px] truncate font-display text-xs font-extrabold tracking-[0.18em] text-white md:text-sm">
-            {currentReel.title}
-          </span>
-          <span className="mt-1 font-mono text-[10px] font-semibold tracking-[0.18em]" style={{ color: currentReel.accentColor }}>
-            TRACK {currentReel.id} / 0{reels.length}
-          </span>
-          <span className="mt-1 text-[8px] font-mono uppercase text-zinc-600">{currentReel.account}</span>
+          {/* Grooves */}
+          <div className="absolute inset-[5%] rounded-full border border-white/[0.045]" />
+          <div className="absolute inset-[10%] rounded-full border border-white/[0.04]" />
+          <div className="absolute inset-[16%] rounded-full border border-white/[0.035]" />
+          <div className="absolute inset-[22%] rounded-full border border-white/[0.04]" />
+          <div className="absolute inset-[28%] rounded-full border border-white/[0.03]" />
+          <div className="absolute inset-[34%] rounded-full border border-white/[0.035]" />
+          <div className="vinyl-groove absolute inset-0 rounded-full" />
+
+          {/* Label */}
+          <div
+            className="absolute left-1/2 top-1/2 flex h-[38%] w-[38%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border text-center transition duration-500 group-hover:scale-105"
+            style={{
+              background: `radial-gradient(circle, ${reel.accentColor}32, #151515 70%)`,
+              borderColor: `${reel.accentColor}80`,
+            }}
+          >
+            <div className="h-4 w-4 rounded-full border border-white/20 bg-black/70" />
+
+            <span className="mt-2 font-mono text-[7px] uppercase tracking-[0.22em] text-white/35">
+              SIDE A
+            </span>
+
+            <span className="mt-1 max-w-[72px] truncate px-1 font-mono text-[7px] font-bold uppercase tracking-[0.12em] text-white">
+              {reel.id} / {String(total).padStart(2, "0")}
+            </span>
+          </div>
         </div>
-        </motion.div>
+
+        {/* Index */}
+        <div className="absolute left-0 top-2 font-mono text-[9px] tracking-[0.2em] text-white/25">
+          {String(index + 1).padStart(2, "0")}
+        </div>
+
+        {/* Play mark */}
+        <div
+          className="absolute bottom-[9%] right-[8%] flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white/65 opacity-0 backdrop-blur-sm transition duration-300 group-hover:opacity-100"
+          style={{
+            borderColor: `${reel.accentColor}55`,
+          }}
+        >
+          <Play size={13} className="translate-x-[1px]" />
+        </div>
       </div>
 
-      <div className="absolute bottom-8 right-8 flex items-center gap-3">
-        <button
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-black/40 text-white backdrop-blur-sm transition hover:border-white/30"
-          onMouseEnter={() => onHoverTrack?.(reels[(activeReelIndex - 1 + reels.length) % reels.length])}
-          onMouseLeave={() => onHoverTrack?.(null)}
-          onClick={() => onSelectTrack?.(reels[(activeReelIndex - 1 + reels.length) % reels.length])}
-          aria-label="Previous reel"
-        >
-          <Disc size={18} />
-        </button>
-        <button
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-black/40 text-white backdrop-blur-sm transition hover:border-white/30"
-          onMouseEnter={() => onHoverTrack?.(reels[(activeReelIndex + 1) % reels.length])}
-          onMouseLeave={() => onHoverTrack?.(null)}
-          onClick={() => onSelectTrack?.(reels[(activeReelIndex + 1) % reels.length])}
-          aria-label="Next reel"
-        >
-          <Play size={18} className="translate-x-[1px]" />
-        </button>
-      </div>
+      {/* Metadata */}
+      <div className="mt-4 flex items-end justify-between gap-4">
+        <div>
+          <div className="font-mono text-[8px] uppercase tracking-[0.2em] text-white/30">
+            {reel.account}
+          </div>
 
-      <div className="absolute bottom-16 left-6 flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-3 py-2 font-mono text-[10px] uppercase text-zinc-300 backdrop-blur-sm">
-        <Eye size={12} />
-        <button onClick={() => onSelectTrack?.(currentReel)} className="hover:text-white">
-          WATCH REEL
-        </button>
+          <div className="mt-2 font-display text-lg font-black uppercase leading-none tracking-[-0.04em] text-white">
+            {reel.title}
+          </div>
+        </div>
+
+        <span
+          className="font-mono text-[8px] uppercase tracking-[0.18em]"
+          style={{ color: reel.accentColor }}
+        >
+          PLAY ↗
+        </span>
       </div>
-    </div>
+    </motion.button>
   );
 };

@@ -1,52 +1,151 @@
-import React from 'react';
+import React from "react";
+import manojImage from "../assets/images/manoj.jpg";
+
+const tools = [
+  {
+    name: "Adobe Premiere Pro",
+    shortName: "PREMIERE PRO",
+    source: "ADOBE",
+    logo:
+      "https://main--cc--adobecom.aem.live/cc-shared/assets/img/product-icons/svg/premiere-pro.svg",
+  },
+  {
+    name: "Adobe After Effects",
+    shortName: "AFTER EFFECTS",
+    source: "ADOBE",
+    logo:
+      "https://main--cc--adobecom.aem.live/cc-shared/assets/img/product-icons/svg/after-effects-40.svg",
+  },
+  {
+    name: "DaVinci Resolve",
+    shortName: "DAVINCI RESOLVE",
+    source: "BLACKMAGIC DESIGN",
+    logo:
+      "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@16.33.0/icons/davinciresolve.svg",
+  },
+  {
+    name: "CapCut",
+    shortName: "CAPCUT",
+    source: "CAPCUT",
+    logo: "/capcut-seeklogo-2.svg",
+  },
+];
 
 export const About = () => {
   return (
-    <section id="about" className="mx-auto max-w-7xl px-6 py-20 md:px-12">
-      <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+    <section
+      id="about"
+      className="mx-auto max-w-7xl overflow-hidden px-6 py-24 md:px-12"
+    >
+      <div className="border-t border-white/10 pt-8">
+        <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-white/30">
+          05
+        </div>
+
+        <h2 className="mt-3 font-display text-5xl font-black uppercase leading-none tracking-[-0.06em] text-white sm:text-6xl">
+          About
+        </h2>
+      </div>
+
+      <div className="mt-12 grid items-start gap-12 lg:grid-cols-[1fr_1.2fr_0.8fr]">
+        {/* Image */}
+        <div className="overflow-hidden border border-white/10 bg-white/[0.02]">
+          <img
+            src={manojImage}
+            alt="Manoj S N"
+            className="aspect-[4/5] h-full w-full object-cover grayscale"
+          />
+        </div>
+
+        {/* About text */}
         <div>
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-zinc-500">About</div>
-          <h2 className="font-display text-3xl font-black uppercase text-white sm:text-4xl">
-            MANOJ S N
-          </h2>
-          <p className="mt-4 max-w-xl font-sans text-base font-light leading-relaxed text-zinc-300 sm:text-lg">
-            I am Manoj S N, a specialized short-form video editor based in [Your Location]. I focus on the intersection of rhythm, sound design, and retention-based editing for Instagram Reels.
+          <div className="font-mono text-[8px] uppercase tracking-[0.22em] text-white/25">
+            A LITTLE ABOUT ME
+          </div>
+
+          <p className="mt-6 text-sm leading-7 text-white/50 md:text-base">
+            I’m Manoj S N, a short-form video editor focused on Instagram
+            Reels. My work sits where pacing, sound design, transitions and
+            visual storytelling meet.
           </p>
 
-          <div className="mt-8 grid gap-5 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <div className="font-display text-2xl font-black text-white">7 yrs</div>
-              <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-500">Editing craft</div>
+          <p className="mt-5 text-sm leading-7 text-white/40 md:text-base">
+            I’ve been editing for around 3 years and completed an internship
+            at SayCheezz.in, gaining practical experience through real editing
+            workflows.
+          </p>
+
+          <div className="mt-9 flex flex-wrap gap-x-10 gap-y-5 border-t border-white/10 pt-6">
+            <div>
+              <div className="font-mono text-[8px] uppercase tracking-[0.18em] text-white/25">
+                EXPERIENCE
+              </div>
+              <div className="mt-2 font-display text-xl font-black text-white">
+                03 YRS
+              </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <div className="font-display text-2xl font-black text-white">30+</div>
-              <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-500">Brands served</div>
+
+            <div>
+              <div className="font-mono text-[8px] uppercase tracking-[0.18em] text-white/25">
+                INTERNSHIP
+              </div>
+              <div className="mt-2 font-display text-xl font-black text-white">
+                SAYCHEEZZ
+              </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <div className="font-display text-2xl font-black text-white">24/7</div>
-              <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-500">Creative flow</div>
+
+            <div>
+              <div className="font-mono text-[8px] uppercase tracking-[0.18em] text-white/25">
+                FOCUS
+              </div>
+              <div className="mt-2 font-display text-xl font-black text-white">
+                REELS
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="h-52 rounded-[1.5rem] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.20),_rgba(255,255,255,0.05)_30%,_transparent_70%),linear-gradient(135deg,#1e1b4b,#0f172a_40%,#111827)]" />
-            <div className="flex flex-col gap-4">
-              <div className="h-24 rounded-[1.5rem] bg-[linear-gradient(135deg,#1f2937,#0f172a)]" />
-              <div className="h-24 rounded-[1.5rem] bg-[linear-gradient(135deg,#111827,#050816)]" />
-            </div>
+        {/* Tools */}
+        <div className="min-w-0">
+          <div className="mb-4 font-mono text-[8px] uppercase tracking-[0.22em] text-white/25">
+            TOOLS
           </div>
 
-          <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-black/30 p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Workflow</div>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-zinc-400">
-              <li>• Hook-first cut planning and storyboard rhythm maps.</li>
-              <li>• Audio cue balancing for pace, tension, and emotional payoff.</li>
-              <li>• Motion design overlays and clean finishing passes for premium look.</li>
-            </ul>
+          <div className="divide-y divide-white/10">
+            {tools.map((tool) => (
+              <div
+                key={tool.name}
+                className="flex min-w-0 items-center gap-4 py-5"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center">
+                  <img
+                    src={tool.logo}
+                    alt={`${tool.name} logo`}
+                    className={`max-h-10 max-w-10 object-contain ${
+                      tool.name === "DaVinci Resolve"
+                        ? "brightness-0 invert"
+                        : ""
+                    }`}
+                  />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-white/75">
+                    {tool.shortName}
+                  </div>
+
+                  <div className="mt-1 font-mono text-[7px] uppercase tracking-[0.2em] text-white/25">
+                    {tool.source}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
+
+      <div className="mt-10 border-t border-white/10 pt-4 font-mono text-[8px] uppercase tracking-[0.2em] text-white/20">
+        SHORT-FORM VIDEO / ALWAYS CURIOUS
       </div>
     </section>
   );

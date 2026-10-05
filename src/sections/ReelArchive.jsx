@@ -1,39 +1,56 @@
-import React from 'react';
-import { VinylRecord } from '../components/VinylRecord';
-import { useTheme } from '../context/ThemeContext';
+import React from "react";
+import { VinylRecord } from "../components/VinylRecord";
+import { useTheme } from "../context/ThemeContext";
 
-export const ReelArchive = ({ reels }) => {
-  const { activeReel, setActiveReel } = useTheme();
-  const currentReel = activeReel || reels[0] || {};
+export const ReelArchive = ({ reels = [] }) => {
+  const { activeReel, isViewerOpen, selectReel } = useTheme();
+
+  const openReel = (reel) => {
+    selectReel(reel);
+  };
 
   return (
-    <section id="work" className="mx-auto flex min-h-screen max-w-7xl items-center justify-between gap-12 px-6 py-20 md:px-12">
-      <div className="flex flex-1 flex-col gap-8">
-        <h2 className="font-mono text-sm uppercase tracking-[0.28em] text-zinc-500">02 // REEL ARCHIVE</h2>
-        <VinylRecord
-          reels={reels}
-          activeReelIndex={reels.findIndex((reel) => reel.id === currentReel?.id) || 0}
-          onTrackChange={(index) => setActiveReel(reels[index])}
-          onSelectTrack={(reel) => setActiveReel(reel)}
-        />
-      </div>
+    <section
+      id="work"
+      className="relative mx-auto max-w-7xl px-6 py-28 md:px-12"
+    >
+      <div className="border-t border-white/10 pt-8">
+        <div className="flex items-end justify-between gap-6">
+          <div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-white/30">
+              02
+            </div>
 
-      <div className="w-full max-w-md border-l border-zinc-900 pl-6 md:pl-12">
-        <div className="space-y-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-500">ACTIVE REEL</div>
-          <div className="font-display text-3xl font-black uppercase tracking-[-0.04em] text-white">
-            {currentReel.title}
+            <h2 className="mt-3 font-display text-5xl font-black uppercase leading-none tracking-[-0.06em] text-white sm:text-6xl md:text-7xl">
+              Selected Work
+            </h2>
           </div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400">{currentReel.account}</div>
-          <p className="max-w-sm text-base leading-7 text-zinc-400">{currentReel.concept}</p>
-          <div className="flex flex-wrap gap-2 pt-2">
-            {currentReel.tags.map((tag) => (
-              <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-300">
-                {tag}
-              </span>
-            ))}
+
+          <div className="hidden font-mono text-[8px] uppercase tracking-[0.2em] text-white/20 md:block">
+            06 REELS / VIDEO SHOWCASE
           </div>
         </div>
+      </div>
+
+      <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-14 md:grid-cols-3 md:gap-x-10 md:gap-y-16">
+        {reels.map((reel, index) => (
+          <VinylRecord
+            key={reel.id}
+            reel={reel}
+            index={index}
+            total={reels.length}
+            isActive={isViewerOpen && activeReel?.id === reel.id}
+            onSelect={openReel}
+          />
+        ))}
+      </div>
+
+      <div className="mt-16 flex items-center justify-between border-t border-white/10 pt-5 font-mono text-[8px] uppercase tracking-[0.2em] text-white/20">
+        <span>CLICK A RECORD TO PLAY</span>
+        <span>
+          {String(reels.length).padStart(2, "0")} /{" "}
+          {String(reels.length).padStart(2, "0")}
+        </span>
       </div>
     </section>
   );
